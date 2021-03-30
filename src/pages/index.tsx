@@ -6,7 +6,6 @@ export default function Home() {
       <Head>
         <title>Inicio | IgNews</title>
       </Head>
-      <h1>Hello world</h1>
     </>
   );
 }
