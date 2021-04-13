@@ -1,10 +1,21 @@
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Prismic from '@prismicio/client';
+import { RichText } from 'prismic-dom';
 import { getPrismicClient } from '../../services/prismic';
 import styles from './styles.module.scss';
 
-export default function Posts() {
+interface IPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  updatedAt: Date;
+}
+interface IPostsProps {
+  posts: IPost[];
+}
+
+export default function Posts({ posts }: IPostsProps) {
   return (
     <>
       <Head>
@@ -12,34 +23,13 @@ export default function Posts() {
       </Head>
       <main className={styles.container}>
         <div className={styles.posts}>
-          <a href="/">
-            <time>12 de março de 2021</time>
-            <strong>Create a monorepo with lerna & yarn workspace</strong>
-            Create a monorepo with lerna yarn workspace. Create a monorepo with
-            lerna yarn workspace. Create a monorepo with lerna yarn workspace.
-            Create a monorepo with lerna yarn workspace
-          </a>
-          <a href="/">
-            <time>12 de março de 2021</time>
-            <strong>Create a monorepo with lerna & yarn workspace</strong>
-            Create a monorepo with lerna yarn workspace. Create a monorepo with
-            lerna yarn workspace. Create a monorepo with lerna yarn workspace.
-            Create a monorepo with lerna yarn workspace
-          </a>
-          <a href="/">
-            <time>12 de março de 2021</time>
-            <strong>Create a monorepo with lerna & yarn workspace</strong>
-            Create a monorepo with lerna yarn workspace. Create a monorepo with
-            lerna yarn workspace. Create a monorepo with lerna yarn workspace.
-            Create a monorepo with lerna yarn workspace
-          </a>
-          <a href="/">
-            <time>12 de março de 2021</time>
-            <strong>Create a monorepo with lerna & yarn workspace</strong>
-            Create a monorepo with lerna yarn workspace. Create a monorepo with
-            lerna yarn workspace. Create a monorepo with lerna yarn workspace.
-            Create a monorepo with lerna yarn workspace
-          </a>
+          {posts.map(post => (
+            <a href="/" key={post.slug}>
+              <time>{post.updatedAt}</time>
+              <strong>{post.title}</strong>
+              <p>{post.excerpt}</p>
+            </a>
+          ))}
         </div>
       </main>
     </>
@@ -52,8 +42,35 @@ export const getStaticProps: GetStaticProps = async () => {
     [Prismic.predicates.at('document.type', 'publication')],
     { fetch: ['publication.title', 'publication.content'], pageSize: 100 },
   );
-  console.log(response);
+
+  const posts = response.results.map(post => {
+    return {
+      slug: post.uid,
+      title: RichText.asText(post.data.title),
+      excerpt:
+        post.data.content.find(content => content.type === 'paragraph')?.text ??
+        '',
+      /*
+        updatedAt: new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      }).format(new Date(post.last_publication_date)),
+      */
+      updatedAt: new Date(post.last_publication_date).toLocaleDateString(
+        'pt-BR',
+        {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        },
+      ),
+    };
+  });
+
   return {
-    props: {},
+    props: {
+      posts,
+    },
   };
 };
