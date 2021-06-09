@@ -7,7 +7,7 @@ import { stripe } from '../services/stripe';
 interface IHomeProps {
   product: {
     priceId: string;
-    amount: number;
+    amount: string;
   };
 }
 
@@ -25,7 +25,7 @@ export default function Home({ product }: IHomeProps) {
           </h1>
           <p>
             Get access to all the publications <br />{' '}
-            <span>for $9.90 month</span>
+            <span>for {product.amount} month</span>
           </p>
           <SubscribeButton />
         </section>
