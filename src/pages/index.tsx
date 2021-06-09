@@ -27,7 +27,7 @@ export default function Home({ product }: IHomeProps) {
             Get access to all the publications <br />{' '}
             <span>for $9.90 month</span>
           </p>
-          <SubscribeButton priceId={product.priceId} />
+          <SubscribeButton />
         </section>
         <img src="/images/avatar.svg" alt="Girl codfing" />
       </main>
