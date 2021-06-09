@@ -10,7 +10,7 @@ interface IPost {
   slug: string;
   title: string;
   excerpt: string;
-  updatedAt: Date;
+  updatedAt: string;
 }
 interface IPostsProps {
   posts: IPost[];
